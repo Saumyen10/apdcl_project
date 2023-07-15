@@ -1,0 +1,108 @@
+{% extends 'common.html' %}
+
+{% block title %}
+Connection page
+{% endblock title %}
+
+{% block body %}
+
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>
+      Documents required for new connection!
+    </strong> </br>
+    1. Latest Passport Size Photo of the Applicant (in jpeg or png format) </br>
+    2. Proof of Identity (Voter identity card / Passport / Driving license / Ration card/ BPL card/ PAN card / Aadhaar Card) </br>
+    3. Residential Address Proof (Driving License/ Bank Passbook/ Aadhaar Card / Telephone Bill / BPL Card / Passport)  </br>
+    4. Proof of the legal occupation of the premises(Holding No., Lease Agreement, Rent Agreement, Sale Deed) </br>
+    5. Test report from authorized electrical contractor / supervisor. </br>
+    Note: Copies of all the documents uploaded shall be self-attested by the applicant and the original copy may be
+    required to be produced at the time of inspection, if required by the licensee.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  
+  <style>
+    .breadcrumb {
+      background-color: #f2f2f2;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+  
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb py-2">
+      <li class="breadcrumb-item">
+        <a href="index.html">Home</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        New Connection
+      </li>
+    </ol>
+  </nav>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link href="static/css/connection.css" rel="stylesheet" />
+
+
+  <h2>Consumer Form</h2>
+
+  <form method="post" id="personForm" data-divisions-url="{% url 'ajax_load_division' %}" data-subdivisions-url= "{% url 'ajax_load_subdivision' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Submit">
+  </form>
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+      $("#id_zone").change(function () {
+          const url = $("#personForm").attr("data-divisions-url");  // get the url of the `load_cities` view
+          const zoneId = $(this).val();  // get the selected zone ID from the HTML input
+  
+          $.ajax({                       // initialize an AJAX request
+              url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+              data: {
+                  'zone_id': zoneId       // add the zone id to the GET parameters
+              },
+              success: function (data) {   // `data` is the return of the `load_cities` view function
+                  $("#id_division").html(data);  // replace the contents of the division input with the data that came from the server
+                  /*
+  
+                  let html_data = '<option value="">---------</option>';
+                  data.forEach(function (division) {
+                      html_data += `<option value="${division.id}">${division.name}</option>`
+                  });
+                  console.log(html_data);
+                  $("#id_division").html(html_data);
+  
+                  */
+              }
+          });
+      });
+  
+      $("#id_division").change(function () {
+              const url = $("#personForm").attr("data-subdivisions-url");  // get the url of the `load_cities` view
+              const divisionId = $(this).val();  // get the selected zone ID from the HTML input
+      
+              $.ajax({                       // initialize an AJAX request
+                  url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+                  data: {
+                      'division_id': divisionId       // add the zone id to the GET parameters
+                  },
+                  success: function (data) {   // `data` is the return of the `load_cities` view function
+                      $("#id_subdivision").html(data);  // replace the contents of the division input with the data that came from the server
+                      /*
+      
+                      let html_data = '<option value="">---------</option>';
+                      data.forEach(function (division) {
+                          html_data += `<option value="${division.id}">${division.name}</option>`
+                      });
+                      console.log(html_data);
+                      $("#id_division").html(html_data);
+      
+                      */
+                  }
+              });
+      });
+  </script>
+
+{% endblock body %}
+
